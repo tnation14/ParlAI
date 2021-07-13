@@ -1,0 +1,5 @@
+# Ensure only the build directory is added to the docker build context.
+# This pattern reduces the overall image footprint and keeps us from accidentally
+# Copying unneeded files into the build.
+*
+!build
