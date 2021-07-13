@@ -104,24 +104,34 @@ definitions:
         - kill %1
       artifacts:
         - website.zip
+        - website/build/
     - step: &deploy-website
       image: circleci/python:3.7.5-buster-node
       caches:
         - pip
+        - docker
       script:
         - . ~/venv/bin/activate
         - pip install s3cmd
-        - mkdir /tmp/website
-        - unzip -d /tmp/website website.zip
-        - pipe: atlassian/aws-s3-deploy:0.3.8
+        - docker build -t parlai-web:${BITBUCKET_COMMIT}
+        - sed -i "s/%%VERSION%%/${BITBUCKET_COMMIT}/g" website/deployment/site.json
+        - pipe: atlassian/aws-ecr-push-image:1.4.1
           variables:
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
             AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-            AWS_DEFAULT_REGION: 'us-east-1'
-            S3_BUCKET: 'parl.ai'
-            LOCAL_PATH: '/tmp/website'
-            ACL: 'public-read'
-        - s3cmd --access_key="${AWS_ACCESS_KEY_ID}" --secret_key="${AWS_SECRET_ACCESS_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
+            AWS_DEFAULT_REGION: us-east-1
+            IMAGE_NAME: parlai-web
+            TAGS: ${BITBUCKET_COMMIT}
+        - pipe: atlassian/aws-ecs-deploy:1.6.0
+          variables:
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_DEFAULT_REGION: us-east-1
+            CLUSTER_NAME: ecs-cluster-production
+            SERVICE_NAME: parlai-web
+            TASK_DEFINITION: website/deployment/site.json # Optional
+            FORCE_NEW_DEPLOYMENT: ${ECS_FORCE_NEW_DEPLOYMENT}
+
       
 
 # -------------------------------------------------------------------------------------
@@ -145,6 +155,9 @@ pipelines:
       - step: *install-dependencies-py37
       - step:
           name: Publish package to PyPi
+          image: circleci/python:3.7.5-buster-node
+          caches:
+            - pip
           script:
             - . ~/venv/bin/activate
             - python setup.py sdist bdist_wheel
