@@ -143,6 +143,15 @@ pipelines:
       - step: *build-website
     master:
       - step: *install-dependencies-py37
+      - step:
+          name: Publish package to PyPi
+          script:
+            - . ~/venv/bin/activate
+            - python setup.py sdist bdist_wheel
+            - pipe: atlassian/pypi-publish:0.3.1
+              variables:
+                PYPI_USERNAME: $PYPI_USERNAME
+                PYPI_PASSWORD: $PYPI_PASSWORD
       - step: *build-website
       - step: *deploy-website
       - step:
