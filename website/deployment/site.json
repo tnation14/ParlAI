@@ -1,0 +1,24 @@
+{
+    "family": "family-parlai-website",
+    "executionRoleArn": "arn:aws:iam::xxxxxxxxxxxx:role/website-task-execution-role",
+    "networkMode": "awsvpc",
+    "containerDefinitions":[{
+        "name": "website",
+        "image": "xxxxxxxxxxxx.dkr.ecr.us-east-1.amazonaws.com/parlai-web:%%VERSION%%",
+        "memory": 512,
+        "cpu": 256,
+        "portMappings": [{
+            "containerPort": 80
+        }],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "parlai-website",
+                "awslogs-region": "us-east-1",
+                "awslogs-stream-prefix": "web",
+                "awslogs-create-group": true
+            }
+        }
+    }]
+
+}
