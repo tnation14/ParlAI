@@ -110,6 +110,7 @@ definitions:
       caches:
         - pip
         - docker
+      deployment: production
       script:
         - . ~/venv/bin/activate
         - pip install s3cmd
