@@ -1,6 +1,4 @@
-# Opting for a minimal install here, since in prod it'd be fronted by CloudFront an ALB that terminates HTTPS.
-# We could add a simple nginx.conf that sets the hostname, loads the filename --> mime-type
-# header mapping, loads files from a different path, and special caching options.
+
 FROM nginx:1.21.1-alpine
 
 COPY website/build/* /usr/share/nginx/html/
