@@ -130,8 +130,8 @@ definitions:
             AWS_DEFAULT_REGION: us-east-1
             CLUSTER_NAME: ecs-cluster-production
             SERVICE_NAME: parlai-web
-            TASK_DEFINITION: website/deployment/site.json # Optional
-            FORCE_NEW_DEPLOYMENT: ${ECS_FORCE_NEW_DEPLOYMENT}
+            TASK_DEFINITION: website/deployment/site.json
+            FORCE_NEW_DEPLOYMENT: ${ECS_FORCE_NEW_DEPLOYMENT} # Trigger this pipeline with an extra variable to force a deployment
 
       
 
