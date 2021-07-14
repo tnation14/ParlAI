@@ -25,12 +25,12 @@ and caches it for use with further builds.
 
 - **Got rid of the S3 deployment:** In the new pipeline, we deploy an updated task definition to an imaginary ECS cluster using the ECS deployment pipe.
 
-- **Added PyPi publishing:** I didn't see any packagine work in the original repo, but this is definitely a pypi package, so I used a pipe to publish the package on pushes to `master`.
+- **Added PyPi publishing:** I didn't see any g work in the original repo, but this is definitely a pypi package, so I used a pipe to publish the package on pushes to `master`.
 
 # Things considered
-- **Speed:** Bitbucket pipelines have a set amount of build minutes per month, and I tried to make good use of caching and small deployments to reduce how long the build runs. However, with the loss of larger instances or GPU agents, moving CI providers would likely represent an increase in build times in the short term.
+- **Speed:** Bitbucket pipelines have a set amount of build minutes per month, and I tried to make good use of caching and small deployments to reduce how long the build runs. However, with the loss of larger instances and GPU agents, moving CI providers would likely represent an increase in build times in the short term.
 - **Keeping the pipeline legible:** I made use of YAML anchors to reduce the amount of code that would have to be rewritten for each pipeline. Using anchors also makes it easier to separate "function" definition from instantiation, so it's easier to read the pipeline at a glance and see _what_ the pipeline does without having to get into the nitty-gritty of _how_. I tried to use descriptive anchor names to achieve that legibility goal as well.
--** Caching:** ensuring pip dependencies are properly cached so that they can be reused across builds, which will reduce build time.
+- **Caching:** ensuring pip dependencies are properly cached so that they can be reused across builds, which will reduce build time.
 - **Image tagging conventions:** I like to tag docker images with their corresponding commit hash, so that it's very easy to identify the commit corresponding to a deploy. The commit hash gets threaded through to the `image` argument in the ECS task definition to ensure depoyment immutability. If you rebuild the build for commit `a1b2c3d4`, you're sure that's image tag `a1b2c3d4` will get deployed as well.
 - **Tracking deployments:** I made sure to mark the deployment stage so we can get metrics on deployment count, mean time to recovery, change failure rate, etc. later.
 - **Limiting the amount of new code written:** normally, I'd wrap multiple commands in a script. I find that paradigm makes it easy to test your CI pipelines locally, and you can do more compmlicated operations with a single command. However, all of this pipeline code has already been written, and I don't think there's any benefits to taking that approach now.
