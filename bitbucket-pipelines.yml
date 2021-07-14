@@ -165,6 +165,7 @@ pipelines:
               variables:
                 PYPI_USERNAME: $PYPI_USERNAME
                 PYPI_PASSWORD: $PYPI_PASSWORD
+            - pip install parlai # test install
       - step: *build-website
       - step: *deploy-website
       - step:
