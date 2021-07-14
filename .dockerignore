@@ -2,4 +2,4 @@
 # This pattern reduces the overall image footprint and keeps us from accidentally
 # Copying unneeded files into the build.
 *
-!build
+!website/build

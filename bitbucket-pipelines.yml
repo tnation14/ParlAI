@@ -113,7 +113,7 @@ definitions:
       script:
         - . ~/venv/bin/activate
         - pip install s3cmd
-        - docker build -t parlai-web:${BITBUCKET_COMMIT}
+        - docker build -f Dockerfile.helm -t parlai-web:${BITBUCKET_COMMIT} .
         - sed -i "s/%%VERSION%%/${BITBUCKET_COMMIT}/g" website/deployment/site.json
         - pipe: atlassian/aws-ecr-push-image:1.4.1
           variables:
